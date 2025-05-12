@@ -6,23 +6,18 @@ const { Document } = require("../models")
 const authToken = require('../middleware/auth');
 const router = express.Router();
 
-// Página de cadastro
 router.get('/register', (req, res) => {
   res.render('register');
 });
 
-// Página de login
 router.get('/login', (req, res) => {
   res.render('login');
 });
 
-// Registro de usuário
 router.post('/register', async (req, res) => {
   const { name, email, password } = req.body;
-  // console.log(req.body)
   try {
     const user = await User.create({ name, email, password });
-    // console.log(user)
     res.redirect('/login');
   } catch (err) {
     console.error(err);
@@ -30,50 +25,41 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// Login do usuário
 router.post('/login-user', async (req, res) => {
-    const { email, password } = req.body;
-    
-    try {
+  const { email, password } = req.body;
 
-        // const testHash = await bcrypt.hash("julio", 10);
-        // console.log(await bcrypt.compare("julio", testHash));
-        
-        // 1. Verificar se o usuário existe
-        const user = await User.findOne({ where: { email } });
-        // console.log(user)
-
-        if (!user) {
-            console.log("usuario nao encontrado")
-            return res.status(401).send('Credenciais inválidas');
-        }
-
-        // 2. Comparar senhas
-
-        // console.log(email)
-        // console.log(password)
-        
-        const passwordMatch = await bcrypt.compare(password, user.password);
-
-        // console.log('Senhas coincidem? que no caso é hard coded (julio)', passwordMatch);
-        
-        if (passwordMatch) {
-            const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-            return res.cookie('token', token).redirect('/dashboard');
-        } else {
-            console.log("senha nao bate")
-            return res.status(401).send('Credenciais inválidas');
-        }
-    
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Erro ao fazer login');
+  try {
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      console.log("usuario nao encontrado")
+      return res.status(401).send('Credenciais inválidas');
     }
+    
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    
+    if (passwordMatch) {
+      const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      return res.cookie('token', token).redirect('/dashboard');
+    } else {
+      console.log("senha nao bate")
+      return res.status(401).send('Credenciais inválidas');
+    }
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Erro ao fazer login');
+  }
 });
 
-router.get('/dashboard', authToken, (req, res) => {
-  // Aqui você pode verificar o token e carregar os dados do usuário
-  res.send('Dashboard do usuário (em construção)');
+router.get('/dashboard', authToken, async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.id);
+    console.log(user)
+    res.render('dashboard', { user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Erro ao carregar o dashboard');
+  }
 });
 
 router.get('/meus-documentos', authToken, async (req, res) => {
@@ -83,10 +69,11 @@ router.get('/meus-documentos', authToken, async (req, res) => {
     });
 
     res.render('meus-documentos', { documents });
-    
+
   } catch (err) {
     console.error(err);
     res.status(500).send('Erro ao carregar documentos');
   }
 });
+
 module.exports = router;

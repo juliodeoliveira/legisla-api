@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <div class="max-w-3xl mx-auto py-10">
+    <h1 class="text-3xl font-bold mb-4">Olá, <%= user.name %>!</h1>
+    <p class="mb-6 text-gray-700">Bem-vindo ao seu painel. Aqui você pode gerenciar seus documentos e acessar suas informações.</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <a href="/meus-documentos" class="block bg-white p-6 rounded shadow hover:bg-gray-50 transition">
+        <h2 class="text-xl font-semibold">📄 Meus Documentos</h2>
+        <p class="mt-2 text-gray-600">Visualize e gerencie os documentos cadastrados.</p>
+      </a>
+
+      <a href="/logout" class="block bg-white p-6 rounded shadow hover:bg-gray-50 transition">
+        <h2 class="text-xl font-semibold">🚪 Sair</h2>
+        <p class="mt-2 text-gray-600">Encerre sua sessão com segurança.</p>
+      </a>
+    </div>
+  </div>
+</body>
+</html>
