@@ -1,0 +1,21 @@
+{
+    "name": "legisla-api",
+    "version": "1.0.0",
+    "main": "app.js",
+    "scripts": {
+        "start": "node app.js"
+    },
+    "dependencies": {
+        "bcrypt": "^5.1.0",
+        "cookie-parser": "^1.4.7",
+        "dotenv": "^16.3.1",
+        "ejs": "^3.1.10",
+        "express": "^4.21.2",
+        "jsonwebtoken": "^9.0.2",
+        "pg": "^8.11.1",
+        "sequelize": "^6.32.1"
+    },
+    "devDependencies": {
+        "tailwindcss": "^3.4.17"
+    }
+}

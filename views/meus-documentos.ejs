@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Meus Documentos</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <div class="max-w-4xl mx-auto py-10">
+    <h1 class="text-3xl font-bold mb-6">Meus Documentos</h1>
+
+    <% if (documents && documents.length > 0) { %>
+      <div class="space-y-4">
+        <% documents.forEach(doc => { %>
+          <div class="bg-white p-4 rounded shadow">
+            <h2 class="text-xl font-semibold"><%= doc.title %></h2>
+            <p class="mt-2 text-gray-600"><%= doc.content %></p>
+          </div>
+        <% }) %>
+      </div>
+    <% } else { %>
+      <p class="text-gray-600">Você ainda não tem documentos cadastrados.</p>
+    <% } %>
+
+    <a href="/dashboard" class="inline-block mt-6 text-blue-600 hover:underline">← Voltar para o dashboard</a>
+  </div>
+</body>
+</html>
