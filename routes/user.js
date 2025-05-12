@@ -7,21 +7,28 @@ const authToken = require('../middleware/auth');
 const router = express.Router();
 
 router.get('/register', (req, res) => {
-  res.render('register');
+  const error = req.session.error || null;
+  req.session.error = null; 
+  res.render('register', { error });
 });
 
 router.get('/login', (req, res) => {
-  res.render('login');
+  const error = req.session.error || null;
+  req.session.error = null;
+  res.render('login', { error });
 });
 
 router.post('/register', async (req, res) => {
   const { name, email, password } = req.body;
+  const error = req.session.error || null;
+  
   try {
     const user = await User.create({ name, email, password });
     res.redirect('/login');
   } catch (err) {
     console.error(err);
-    res.status(500).send('Erro ao registrar usuário');
+    req.session.error = "Email já cadastrado e/ou caracteres inválidos";
+    res.redirect("/register");
   }
 });
 
@@ -31,8 +38,8 @@ router.post('/login-user', async (req, res) => {
   try {
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      console.log("usuario nao encontrado")
-      return res.status(401).send('Credenciais inválidas');
+      req.session.error = 'Credenciais inválidas';
+      return res.redirect("/login");
     }
     
     const passwordMatch = await bcrypt.compare(password, user.password);
@@ -41,13 +48,14 @@ router.post('/login-user', async (req, res) => {
       const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
       return res.cookie('token', token).redirect('/dashboard');
     } else {
-      console.log("senha nao bate")
-      return res.status(401).send('Credenciais inválidas');
+      req.session.error = 'Credenciais inválidas';
+      return res.redirect("/login");
     }
 
   } catch (err) {
     console.error(err);
-    res.status(500).send('Erro ao fazer login');
+    req.session.error = 'Erro ao logar usuário';
+    return res.redirect("/login");
   }
 });
 
