@@ -83,4 +83,15 @@ router.get('/meus-documentos', authToken, async (req, res) => {
   }
 });
 
+router.post("/add-document", authToken, async (req, res) => {
+  const { title, content } = req.body;
+  try {
+    const user_id = req.user.id;
+    const document = await Document.create({ title, content, user_id });
+    res.redirect("/meus-documentos");
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 module.exports = router;

@@ -9,12 +9,27 @@
   <div class="max-w-4xl mx-auto py-10">
     <h1 class="text-3xl font-bold mb-6">Meus Documentos</h1>
 
+    <form action="/add-document" method="POST" class="bg-white p-6 rounded shadow mb-8">
+      <h2 class="text-xl font-semibold mb-4">Novo Documento</h2>
+      <div class="mb-4">
+        <label for="title" class="block font-medium mb-1">Título</label>
+        <input type="text" name="title" id="title" class="w-full border border-gray-300 rounded px-3 py-2" required />
+      </div>
+      <div class="mb-4">
+        <label for="content" class="block font-medium mb-1">Conteúdo</label>
+        <textarea name="content" id="content" rows="6" class="w-full border border-gray-300 rounded px-3 py-2" required></textarea>
+      </div>
+      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        Salvar Documento
+      </button>
+    </form>
+
     <% if (documents && documents.length > 0) { %>
       <div class="space-y-4">
         <% documents.forEach(doc => { %>
           <div class="bg-white p-4 rounded shadow">
             <h2 class="text-xl font-semibold"><%= doc.title %></h2>
-            <p class="mt-2 text-gray-600"><%= doc.content %></p>
+            <p class="mt-2 text-gray-600 whitespace-pre-wrap"><%= doc.content %></p>
           </div>
         <% }) %>
       </div>
