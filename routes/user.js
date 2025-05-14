@@ -58,6 +58,11 @@ router.post('/login-user', async (req, res) => {
   }
 });
 
+router.get("/logout", (req, res) => {
+  res.clearCookie('token'); 
+  res.redirect('/login');
+});
+
 router.get('/dashboard', authToken, async (req, res) => {
   try {
     const user = await User.findByPk(req.user.id);

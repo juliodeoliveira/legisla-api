@@ -19,7 +19,6 @@ app.use(session({
 app.use('/', require('./routes/web'));
 app.use('/', require('./routes/user'));
 app.use('/', require('./routes/documents'));
-app.use('/', require('./routes/auth.routes'));
 
 app.set('view engine', 'ejs');
 
