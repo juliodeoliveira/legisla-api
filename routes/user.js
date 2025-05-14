@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const { User } = require('../models');
 const { Document } = require("../models")
 const authToken = require('../middleware/auth');
+// const { where } = require('sequelize');
 const router = express.Router();
 
 router.get('/register', (req, res) => {
@@ -83,15 +84,25 @@ router.get('/meus-documentos', authToken, async (req, res) => {
   }
 });
 
+// TODO: Mover para arquivo que tenha apenas rotas documents
 router.post("/add-document", authToken, async (req, res) => {
   const { title, content } = req.body;
   try {
     const user_id = req.user.id;
+    // TODO: Nunca confie no que vem do front end
     const document = await Document.create({ title, content, user_id });
     res.redirect("/meus-documentos");
   } catch (error) {
     console.log(error);
   }
 });
+
+router.post("/delete-document/:id", authToken, async (req, res) => {
+  const { id } = req.params;
+  const user_id = req.user.id;
+
+  await Document.destroy({ where: { id, user_id }})
+  res.redirect("/meus-documentos");
+})
 
 module.exports = router;

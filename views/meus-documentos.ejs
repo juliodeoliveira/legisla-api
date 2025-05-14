@@ -4,6 +4,14 @@
   <meta charset="UTF-8" />
   <title>Meus Documentos</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .doc-card:hover .delete-btn {
+      display: inline-block;
+    }
+    .delete-btn {
+      display: none;
+    }
+  </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
   <div class="max-w-4xl mx-auto py-10">
@@ -27,9 +35,15 @@
     <% if (documents && documents.length > 0) { %>
       <div class="space-y-4">
         <% documents.forEach(doc => { %>
-          <div class="bg-white p-4 rounded shadow">
+          <div class="bg-white p-4 rounded shadow relative doc-card">
             <h2 class="text-xl font-semibold"><%= doc.title %></h2>
             <p class="mt-2 text-gray-600 whitespace-pre-wrap"><%= doc.content %></p>
+
+            <form action="/delete-document/<%= doc.id %>" method="POST" class="absolute top-2 right-2">
+              <button type="submit" class="delete-btn bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">
+                Deletar
+              </button>
+            </form>
           </div>
         <% }) %>
       </div>
