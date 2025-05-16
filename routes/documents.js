@@ -1,89 +1,25 @@
 
 const express = require('express');
 const router = express.Router();
-const { Document } = require("../models")
 const authToken = require('../middleware/auth');
-const { body, validationResult } = require("express-validator");
+const { body } = require("express-validator");
+const documentController = require("../controllers/DocumentController");
 
-router.get('/meus-documentos', authToken, async (req, res) => {
-    const error = req.session.error || null;
-    req.session.error = null; 
-    try {
-        const documents = await Document.findAll({
-            where: { user_id: req.user.id },
-        });
-
-        res.render('meus-documentos', { documents, error });
-
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Erro ao carregar documentos');
-    }
-});
+router.get('/meus-documentos', authToken, documentController.showDocuments);
 
 router.post("/add-document", authToken, [
         body('title').trim().isLength({ min: 3 }).escape(),
         body('content').trim().isLength({ min: 10 }).escape()
-    ], async (req, res) => {
+    ], documentController.addDocument);
 
-    const { title, content } = req.body;
+router.post("/delete-document/:id", authToken, documentController.deleteDocument);
 
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        req.session.error = "Título ou conteúdo inválido";
-        return res.redirect("/meus-documentos");
-    }
-
-    try {
-        const user_id = req.user.id;
-        const document = await Document.create({ title, content, user_id });
-        res.redirect("/meus-documentos");
-    } catch (error) {
-        console.log(error);
-    }
-});
-
-router.post("/delete-document/:id", authToken, async (req, res) => {
-  const { id } = req.params;
-  const user_id = req.user.id;
-
-  await Document.destroy({ where: { id, user_id }})
-  res.redirect("/meus-documentos");
-
-});
-
-router.get('/edit-document/:id', authToken, async (req, res) => {
-  const document = await Document.findByPk( req.params.id );
-  if (!document || document.user_id !== req.user.id) {
-    req.session.error = "Documento não encontrado ou acesso negado";
-    return res.redirect('/meus-documentos');
-  }
-  res.render('edit-document', { document });
-});
+router.get('/edit-document/:id', authToken, documentController.showEditPage);
 
 router.post('/edit-document/:id', authToken, [
         body('title').trim().isLength({ min: 3 }).escape(),
         body('content').trim().isLength({ min: 10 }).escape()
-    ], async (req, res) => {
-        
-    const { title, content } = req.body;
-
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        req.session.error = "Título ou conteúdo inválido";
-        return res.redirect("/meus-documentos");
-    }
-
-    const document = await Document.findByPk(req.params.id);
-
-    if (!document || document.user_id !== req.user.id) {
-        req.session.error = "Documento não encontrado ou acesso negado";
-        return res.redirect('/meus-documentos');
-    }
-
-    await document.update({ title, content });
-    res.redirect('/meus-documentos');
-});
+    ], documentController.editDocument);
 
 
 module.exports = router;
